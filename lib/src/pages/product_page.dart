@@ -1,5 +1,6 @@
 
 import 'package:app_flutter_formsvalidation/src/models/product_model.dart';
+import 'package:app_flutter_formsvalidation/src/providers/products_provider.dart';
 import 'package:app_flutter_formsvalidation/src/utils/utils.dart' as utils;
 import 'package:flutter/material.dart';
 
@@ -11,12 +12,23 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   final formKey = GlobalKey<FormState>();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final productsProvider = new ProductsProvider();
 
-  ProductModel product = new ProductModel();
+  ProductModel product = new ProductModel();  
+  bool _save = false;
 
   @override
   Widget build(BuildContext context) {
+
+    final ProductModel prodData = ModalRoute.of(context).settings.arguments;        
+
+    if(prodData!=null){
+      product = prodData;
+    }
+
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text('Product'),
         actions: <Widget>[
@@ -97,7 +109,7 @@ class _ProductPageState extends State<ProductPage> {
       textColor: Colors.white,
       icon: Icon(Icons.save),
       label: Text('Save'),
-      onPressed: _submit,
+      onPressed: (_save)?null: _submit,
     );
   }
 
@@ -122,5 +134,31 @@ class _ProductPageState extends State<ProductPage> {
     print(product.title);
     print(product.value);
     print(product.available);
+    
+    setState(() {
+      _save = true;  
+    });
+
+    if(product.id==null){
+      productsProvider.createProduct(product);
+    }else{
+      productsProvider.updateProduct(product);
+    }    
+
+    /*setState(() {
+      _save = false;  
+    });*/
+
+    showSnackbar('Register save');
+    Navigator.pop(context);
+  }
+
+  void showSnackbar(String message){
+    final snackbar = SnackBar(
+      content: Text(message),
+      duration: Duration(milliseconds: 1500),
+    );
+
+    scaffoldKey.currentState.showSnackBar(snackbar);
   }
 }
