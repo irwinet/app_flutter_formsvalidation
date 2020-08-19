@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Home Page'),
       ),
-      body: Column(
+      /*body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -21,7 +21,17 @@ class HomePage extends StatelessWidget {
           Divider(),
           Text('Password: ${bloc.password}'),
         ],
-      ),
+      ),*/
+      body: Container(),
+      floatingActionButton: _createButton(context),
+    );
+  }
+
+  Widget _createButton(BuildContext context){
+    return FloatingActionButton(
+      child: Icon(Icons.add),
+      backgroundColor: Colors.deepPurple,
+      onPressed: ()=>Navigator.pushNamed(context, 'product'),
     );
   }
 }
