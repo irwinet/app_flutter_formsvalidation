@@ -47,6 +47,9 @@ class ProductsProvider{
 
     if(decodedData==null) return [];
 
+    //Implementation Token Expire
+    if(decodedData['error']!=null) return [];
+
     decodedData.forEach((key, value) {
       //print(value);
       final prodTemp = ProductModel.fromJson(value);

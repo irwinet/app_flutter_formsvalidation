@@ -24,6 +24,14 @@ class PreferencesUser{
     _prefs.setString('token', value);
   } 
 
+  get tokenExpire {
+    return _prefs.getString('tokenExpire')??'';
+  }
+
+  set tokenExpire(String value){
+    _prefs.setString('tokenExpire', value);
+  } 
+
   get lastPage {
     return _prefs.getString('lastPage')??'login';
   }

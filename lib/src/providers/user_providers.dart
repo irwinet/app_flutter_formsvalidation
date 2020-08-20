@@ -28,6 +28,7 @@ class UserProvider{
     if(decodedResp.containsKey('idToken')){
       //Save token in the storage
       _prefs.token = decodedResp['idToken'];
+      _prefs.tokenExpire = decodedResp['expiresIn'];
       return {'ok':true,'token':decodedResp['idToken']};
     }else{
       //Error
@@ -54,6 +55,7 @@ class UserProvider{
     if(decodedResp.containsKey('idToken')){
       //Save token in the storage
       _prefs.token = decodedResp['idToken'];
+      _prefs.tokenExpire = decodedResp['expiresIn'];
       return {'ok':true,'token':decodedResp['idToken']};
     }else{
       //Error
