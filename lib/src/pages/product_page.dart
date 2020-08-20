@@ -1,8 +1,11 @@
 
+import 'dart:io';
+
 import 'package:app_flutter_formsvalidation/src/models/product_model.dart';
 import 'package:app_flutter_formsvalidation/src/providers/products_provider.dart';
 import 'package:app_flutter_formsvalidation/src/utils/utils.dart' as utils;
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProductPage extends StatefulWidget {
   //const ProductPage({Key key}) : super(key: key);
@@ -17,6 +20,7 @@ class _ProductPageState extends State<ProductPage> {
 
   ProductModel product = new ProductModel();  
   bool _save = false;
+  File photo;
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +38,11 @@ class _ProductPageState extends State<ProductPage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.photo_size_select_actual),
-            onPressed: (){},
+            onPressed: _selectPhoto,
           ),
           IconButton(
             icon: Icon(Icons.camera_alt),
-            onPressed: (){},
+            onPressed: _takePhoto,
           ),
         ],
       ),
@@ -49,6 +53,7 @@ class _ProductPageState extends State<ProductPage> {
             key: formKey,
             child: Column(
               children: <Widget>[
+                _showPhoto(),
                 _createName(),
                 _createPrice(),
                 _createAvailable(),
@@ -124,8 +129,10 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  void _submit(){
+  void _submit() async{
     
+
+
     if(!formKey.currentState.validate())return;
 
     formKey.currentState.save();
@@ -138,6 +145,10 @@ class _ProductPageState extends State<ProductPage> {
     setState(() {
       _save = true;  
     });
+
+    if(photo!=null){
+      product.photoUrl = await productsProvider.uploadImage(photo);
+    }
 
     if(product.id==null){
       productsProvider.createProduct(product);
@@ -161,4 +172,46 @@ class _ProductPageState extends State<ProductPage> {
 
     scaffoldKey.currentState.showSnackBar(snackbar);
   }
+
+  Widget _showPhoto(){
+    if(product.photoUrl!=null){
+      return FadeInImage(
+        image: NetworkImage(product.photoUrl),
+        placeholder: AssetImage('assets/jar-loading.gif'),
+        height: 300.0,
+        fit: BoxFit.contain,
+      );
+    }
+    else{
+      return Image(
+        image: AssetImage( photo?.path??'assets/no-image.png'),
+        height: 300.0,
+        fit: BoxFit.cover,
+      );
+    }
+  }
+
+  _selectPhoto() async{
+    _processImage(ImageSource.gallery);
+  }
+
+  _takePhoto() async{
+    _processImage(ImageSource.camera);
+  }
+
+  _processImage(ImageSource imageSource) async{
+    photo = await ImagePicker.pickImage(
+      source: imageSource
+    );
+
+    if(photo!=null){
+      //Clean
+      product.photoUrl = null;
+    }
+
+    setState(() {
+      
+    });
+  }
+
 }

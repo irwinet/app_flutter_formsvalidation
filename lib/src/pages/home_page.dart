@@ -3,8 +3,13 @@ import 'package:app_flutter_formsvalidation/src/models/product_model.dart';
 import 'package:app_flutter_formsvalidation/src/providers/products_provider.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   //const HomePage({Key key}) : super(key: key);
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final productsProvider = new ProductsProvider();
 
   @override
@@ -57,19 +62,42 @@ class HomePage extends StatelessWidget {
         //Deleted Product
         productsProvider.deleteProduct(model.id);
       },
-      child: ListTile(
-        title: Text('${model.title} - ${model.value}'),
-        subtitle: Text(model.id),
-        onTap: ()=>Navigator.pushNamed(context, 'product', arguments: model),
+      child: Card(
+        child: Column(
+          children: <Widget>[
+            (model.photoUrl==null)
+            ? Image(image: AssetImage('assets/no-image.png'),)
+            : FadeInImage(
+              image: NetworkImage(model.photoUrl),
+              placeholder: AssetImage('assets/jar-loading.gif'),
+              height: 300.0,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            ListTile(
+              title: Text('${model.title} - ${model.value}'),
+              subtitle: Text(model.id),
+              onTap: ()=>Navigator.pushNamed(context, 'product', arguments: model).then((value) => setState((){})),
+            )
+          ],
+        ),
       ),
     );
+
+    /*
+    ListTile(
+      title: Text('${model.title} - ${model.value}'),
+      subtitle: Text(model.id),
+      onTap: ()=>Navigator.pushNamed(context, 'product', arguments: model).then((value) => setState((){})),
+    )
+    */
   }
 
   Widget _createButton(BuildContext context){
     return FloatingActionButton(
       child: Icon(Icons.add),
       backgroundColor: Colors.deepPurple,
-      onPressed: ()=>Navigator.pushNamed(context, 'product'),
+      onPressed: ()=>Navigator.pushNamed(context, 'product').then((value) => setState((){})),
     );
   }
 }

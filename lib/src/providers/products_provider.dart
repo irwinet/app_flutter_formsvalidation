@@ -1,8 +1,11 @@
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:app_flutter_formsvalidation/src/models/product_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:mime_type/mime_type.dart';
+import 'package:http_parser/http_parser.dart';
 
 class ProductsProvider{
   final String _url = 'https://app-flutter-4a58f.firebaseio.com';
@@ -63,6 +66,36 @@ class ProductsProvider{
     print(resp.body);
 
     return 1;
+  }
+
+  Future<String> uploadImage(File file) async{
+    final url = Uri.parse('https://api.cloudinary.com/v1_1/dtefjkfn7/image/upload?upload_preset=rn9rtbll');
+    final mimeType = mime(file.path).split('/');
+
+    final imageUploadedRequest = http.MultipartRequest(
+      'POST',
+      url
+    );
+
+    final image = await http.MultipartFile.fromPath(
+      'file', 
+      file.path, 
+      contentType: MediaType(mimeType[0], mimeType[1])
+    );
+
+    imageUploadedRequest.files.add(image);
+    final streamResponse = await imageUploadedRequest.send();
+    final resp = await http.Response.fromStream(streamResponse);
+
+    if(resp.statusCode!=200 && resp.statusCode!=201){
+      print('Error');
+      print(resp.body);
+      return null;
+    }
+
+    final respData = json.decode(resp.body);
+    print(respData);
+    return respData['secure_url'];
   }
 
 }
