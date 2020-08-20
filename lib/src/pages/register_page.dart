@@ -3,8 +3,8 @@ import 'package:app_flutter_formsvalidation/src/providers/user_providers.dart';
 import 'package:app_flutter_formsvalidation/src/utils/utils.dart' as utils;
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
-  //const LoginPage({Key key}) : super(key: key);
+class RegisterPage extends StatelessWidget {
+  //const RegisterPage({Key key}) : super(key: key);
   final userProvider = new UserProvider();
 
   @override
@@ -100,7 +100,7 @@ class LoginPage extends StatelessWidget {
             ),
             child: Column(
               children: <Widget>[
-                Text('Login', style: TextStyle(fontSize: 20.0),),
+                Text('Create account', style: TextStyle(fontSize: 20.0),),
                 SizedBox(height: 60.0,),
                 _createEmail(bloc),
                 SizedBox(height: 30.0,),
@@ -113,8 +113,8 @@ class LoginPage extends StatelessWidget {
 
           //Text('Remember Password?'),
           FlatButton(
-            child: Text('Create account'),
-            onPressed: ()=>Navigator.pushReplacementNamed(context, 'register'),
+            child: Text('Log in'),
+            onPressed: ()=>Navigator.pushReplacementNamed(context, 'login'),
           ),
           SizedBox(height: 100.0,),
         ],
@@ -176,7 +176,7 @@ class LoginPage extends StatelessWidget {
         return RaisedButton(
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
-            child: Text('Login'),
+            child: Text('Register'),
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5.0)
@@ -192,12 +192,13 @@ class LoginPage extends StatelessWidget {
   }
 
   _login(LoginBloc bloc, BuildContext context) async{
-    print('********************************');
+    /*print('********************************');
     print('Email: ${bloc.email}');
     print('Password: ${bloc.password}');
     print('********************************');
 
-    Map info = await userProvider.login(bloc.email, bloc.password);
+    Navigator.pushReplacementNamed(context, 'home');*/
+    final info = await userProvider.newUser(bloc.email, bloc.password);
 
     if(info['ok']){
       Navigator.pushReplacementNamed(context, 'home');
@@ -205,7 +206,6 @@ class LoginPage extends StatelessWidget {
     else{
       utils.showAlert(context, info['message']);
     }
-    
   }
 
 }
