@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:app_flutter_formsvalidation/src/models/product_model.dart';
+import 'package:app_flutter_formsvalidation/src/providers/navigation_provider.dart';
+import 'package:app_flutter_formsvalidation/src/providers/service_locator.dart';
 import 'package:app_flutter_formsvalidation/src/shared_prefs/preferences_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:mime_type/mime_type.dart';
@@ -11,6 +13,7 @@ import 'package:http_parser/http_parser.dart';
 class ProductsProvider{
   final String _url = 'https://app-flutter-4a58f.firebaseio.com';
   final _prefs = new PreferencesUser();
+  final NavigationProvider _navigationProvider = locator<NavigationProvider>();
 
   Future<bool> createProduct(ProductModel model) async{
     final url='$_url/products.json?auth=${_prefs.token}';
@@ -48,15 +51,18 @@ class ProductsProvider{
     if(decodedData==null) return [];
 
     //Implementation Token Expire
-    if(decodedData['error']!=null) return [];
+    if(decodedData['error']!=null){
+      _navigationProvider.navigateTo('login');
+    }
+    else{
+      decodedData.forEach((key, value) {
+        //print(value);
+        final prodTemp = ProductModel.fromJson(value);
+        prodTemp.id = key;
 
-    decodedData.forEach((key, value) {
-      //print(value);
-      final prodTemp = ProductModel.fromJson(value);
-      prodTemp.id = key;
-
-      products.add(prodTemp);
-    });
+        products.add(prodTemp);
+      });
+    }
 
     //print(products[0].id);
 
